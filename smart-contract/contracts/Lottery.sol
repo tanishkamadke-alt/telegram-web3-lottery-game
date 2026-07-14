@@ -13,15 +13,13 @@ contract Lottery{
     address[] public players;
     uint public currentRound = 1;
 
-    address public winner;
-
     address public latestWinner;
 
     struct LotteryRound {
         uint roundId;
         address winner;
         uint prizeAmount;
-        uint getTotalPlayers;
+        uint totalPlayers;
         uint ticketPrice;
         uint timestamp;
         bytes32 lotteryHash;
@@ -86,6 +84,7 @@ contract Lottery{
 
     function drawWinner() public onlyManager{
         require(players.length >= 2, "At least two players are required");
+        require(address(this).balance > 0, "No prize available");
 
         uint winnerIndex = random() % players.length;
         address winnerAddress = players[winnerIndex];
@@ -94,14 +93,16 @@ contract Lottery{
 
         uint prize = address(this).balance;
 
-        payable(winnerAddress).transfer(prize);
+        (bool success, ) = payable(winnerAddress).call{value: prize}("");
+
+        require(success, "Prize transfer failed");
 
         lotteryHistory.push(
             LotteryRound({
                 roundId: currentRound,
                 winner: winnerAddress,
                 prizeAmount: prize,
-                getTotalPlayers: players.length,
+                totalPlayers: players.length,
                 ticketPrice: ticketPrice,
                 timestamp: block.timestamp,
                 lotteryHash: keccak256(
@@ -125,5 +126,24 @@ contract Lottery{
         currentRound++;
     }
 
+    function getLotteryHistoryCount() public view returns (uint) {
+        return lotteryHistory.length;
+    }
+
+    function getLotteryRound(
+        uint index
+    ) public view returns (LotteryRound memory) {
+
+        require(
+            index < lotteryHistory.length,
+            "Invalid lottery round"
+        );
+
+        return lotteryHistory[index];
+    }
+
+    function getLatestWinner() public view returns (address) {
+        return latestWinner;
+    }
 }
 
