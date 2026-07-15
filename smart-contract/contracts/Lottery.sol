@@ -95,7 +95,6 @@ contract Lottery{
 
         (bool success, ) = payable(winnerAddress).call{value: prize}("");
 
-        require(success, "Prize transfer failed");
 
         lotteryHistory.push(
             LotteryRound({
