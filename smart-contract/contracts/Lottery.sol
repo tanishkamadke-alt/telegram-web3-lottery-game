@@ -1,100 +1,190 @@
-//SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-contract Lottery{
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-    //address of contract owner
-    address public manager;
+contract Lottery is ReentrancyGuard {
 
-    //fixed ticket price
-    uint public ticketPrice = 0.01 ether;
+    // ============================================================
+    //                        ERRORS
+    // ============================================================
 
-    //list of players
+    error NotManager();
+    error IncorrectTicketPrice();
+    error NotEnoughPlayers();
+    error NoPrizeAvailable();
+    error PrizeTransferFailed();
+    error InvalidLotteryRound();
+    error DirectTransferNotAllowed();
+    error InvalidFunction();
+
+    // ============================================================
+    //                    STATE VARIABLES
+    // ============================================================
+
+    /// @notice Contract owner
+    address public immutable manager;
+
+    /// @notice Fixed ticket price
+    uint256 public constant TICKET_PRICE = 0.01 ether;
+
+    /// @notice Current lottery players
     address[] public players;
-    uint public currentRound = 1;
 
+    /// @notice Current lottery round
+    uint256 public currentRound = 1;
+
+    /// @notice Latest winner
     address public latestWinner;
 
+    // ============================================================
+    //                        STRUCTS
+    // ============================================================
+
     struct LotteryRound {
-        uint roundId;
+        uint256 roundId;
         address winner;
-        uint prizeAmount;
-        uint totalPlayers;
-        uint ticketPrice;
-        uint timestamp;
+        uint256 prizeAmount;
+        uint256 totalPlayers;
+        uint256 ticketPrice;
+        uint256 timestamp;
         bytes32 lotteryHash;
     }
 
     LotteryRound[] public lotteryHistory;
 
+    // ============================================================
+    //                         EVENTS
+    // ============================================================
+
     event TicketPurchased(
-        address indexed player,
-        uint indexed roundId
-    );
+    address indexed player,
+    uint256 indexed roundId,
+    uint256 ticketPrice,
+    uint256 timestamp
+);
 
-    event WinnerSelected(
-        uint indexed roundId,
-        address indexed winner,
-        uint prizeAmount
-    );
+event WinnerSelected(
+    uint256 indexed roundId,
+    address indexed winner,
+    uint256 prizeAmount,
+    uint256 totalPlayers,
+    uint256 timestamp
+);
 
-    //modifier lets us write the check once and reuse Identifier
+    // ============================================================
+    //                        MODIFIER
+    // ============================================================
+
     modifier onlyManager() {
-        require(msg.sender == manager, "Only manager can perform this action");
-        _;   //after the security check passes, execute the function
+        if (msg.sender != manager) {
+            revert NotManager();
+        }
+        _;
     }
 
-    //constructor: save the wallet address of the person who deployed the contract
-    //that person becomes the manager (admin) of the Lottery
-    
-    constructor(){
-        manager = msg.sender;  //wallet address that called current function
-    } 
+    // ============================================================
+    //                      CONSTRUCTOR
+    // ============================================================
 
-    function buyTicket() public payable {
-        require(msg.value == ticketPrice, "Incorrect ticket price");
+    constructor() {
+        manager = msg.sender;
+    }
+
+    // ============================================================
+    //                    BUY TICKET
+    // ============================================================
+
+    function buyTicket() external payable {
+
+        if (msg.value != TICKET_PRICE) {
+            revert IncorrectTicketPrice();
+        }
+
         players.push(msg.sender);
-        emit TicketPurchased(msg.sender, currentRound);
+
+        emit TicketPurchased(
+            msg.sender,
+            currentRound,
+            TICKET_PRICE,
+            block.timestamp
+        );
     }
 
-    function getPlayers() public view returns (address[] memory) {
-        return players;
-    }
+    // ============================================================
+    //                  RANDOM NUMBER (ACADEMIC ONLY)
+    // ============================================================
 
-    function getTotalPlayers() public view returns (uint) {
-        return players.length;
-    }
+    function random() private view returns (uint256) {
 
-    function getContractBalance() public view returns (uint){
-        return address(this).balance;
-    }
-
-    function random() private view returns (uint){
-        //returns large unsigned integer
-        return uint(  
-            keccak256( //solidity's cryptographic hash function
-                abi.encodePacked(  //combines several values into one byte array before hashing
+        return uint256(
+            keccak256(
+                abi.encodePacked(
                     block.timestamp,
                     block.prevrandao,
-                    players.length
+                    players.length,
+                    address(this).balance,
+                    currentRound
                 )
             )
         );
     }
 
-    function drawWinner() public onlyManager{
-        require(players.length >= 2, "At least two players are required");
-        require(address(this).balance > 0, "No prize available");
+    // ============================================================
+    //                     VIEW FUNCTIONS
+    // ============================================================
 
-        uint winnerIndex = random() % players.length;
+    function getPlayers()
+        external
+        view
+        returns (address[] memory)
+    {
+        return players;
+    }
+
+    function getTotalPlayers()
+        external
+        view
+        returns (uint256)
+    {
+        return players.length;
+    }
+
+    function getContractBalance()
+        external
+        view
+        returns (uint256)
+    {
+        return address(this).balance;
+    }
+
+    // ============================================================
+    //                    DRAW WINNER
+    // ============================================================
+
+    function drawWinner()
+        external
+        onlyManager
+        nonReentrant
+    {
+        if (players.length < 2) {
+            revert NotEnoughPlayers();
+        }
+
+        uint256 prize = address(this).balance;
+
+        if (prize == 0) {
+            revert NoPrizeAvailable();
+        }
+
+        uint256 winnerIndex = random() % players.length;
         address winnerAddress = players[winnerIndex];
 
+        // ========================================================
+        //                EFFECTS (CEI Pattern)
+        // ========================================================
+
         latestWinner = winnerAddress;
-
-        uint prize = address(this).balance;
-
-        (bool success, ) = payable(winnerAddress).call{value: prize}("");
-
 
         lotteryHistory.push(
             LotteryRound({
@@ -102,7 +192,7 @@ contract Lottery{
                 winner: winnerAddress,
                 prizeAmount: prize,
                 totalPlayers: players.length,
-                ticketPrice: ticketPrice,
+                ticketPrice: TICKET_PRICE,
                 timestamp: block.timestamp,
                 lotteryHash: keccak256(
                     abi.encodePacked(
@@ -118,31 +208,81 @@ contract Lottery{
         emit WinnerSelected(
             currentRound,
             winnerAddress,
-            prize
+            prize,
+            players.length,
+            block.timestamp
         );
+
         delete players;
 
         currentRound++;
+
+        // ========================================================
+        //               INTERACTION (External Call)
+        // ========================================================
+
+        (bool success, ) = payable(winnerAddress).call{
+            value: prize
+        }("");
+
+        if (!success) {
+            revert PrizeTransferFailed();
+        }
     }
 
-    function getLotteryHistoryCount() public view returns (uint) {
+    // ============================================================
+    //                    HISTORY FUNCTIONS
+    // ============================================================
+
+    function getLotteryHistoryCount()
+        external
+        view
+        returns (uint256)
+    {
         return lotteryHistory.length;
     }
 
     function getLotteryRound(
-        uint index
-    ) public view returns (LotteryRound memory) {
-
-        require(
-            index < lotteryHistory.length,
-            "Invalid lottery round"
-        );
+        uint256 index
+    )
+        external
+        view
+        returns (LotteryRound memory)
+    {
+        if (index >= lotteryHistory.length) {
+            revert InvalidLotteryRound();
+        }
 
         return lotteryHistory[index];
     }
 
-    function getLatestWinner() public view returns (address) {
+    // ============================================================
+    //                    LATEST WINNER
+    // ============================================================
+
+    function getLatestWinner()
+        external
+        view
+        returns (address)
+    {
         return latestWinner;
     }
+
+    // ============================================================
+    //              PREVENT DIRECT ETH TRANSFERS
+    // ============================================================
+
+    function ticketPrice() external pure returns (uint256) {
+    return TICKET_PRICE;
+    }
+    
+    receive() external payable {
+        revert DirectTransferNotAllowed();
+    }
+
+    fallback() external payable {
+        revert InvalidFunction();
+    }
 }
+
 

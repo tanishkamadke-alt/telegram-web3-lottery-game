@@ -1,0 +1,40 @@
+.skeleton{
+
+    position:relative;
+
+    overflow:hidden;
+
+    background:#1f2b44;
+
+}
+
+.skeleton::after{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    transform:translateX(-100%);
+
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.12),
+        transparent
+    );
+
+    animation:skeletonLoading 1.2s infinite;
+
+}
+
+@keyframes skeletonLoading{
+
+    100%{
+
+        transform:translateX(100%);
+
+    }
+
+}

@@ -1,0 +1,156 @@
+.history-subtitle{
+    color:#94a3b8;
+    margin-top:-6px;
+    margin-bottom:14px;
+    font-size:15px;
+    line-height:1.5;
+}
+
+.history-stats{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:22px;
+    margin:12px 0 8px;
+}
+
+.history-stat-card{
+    background:#202b45;
+    border:1px solid #31446e;
+    border-radius:18px;
+    padding:26px;
+    transition:.25s ease;
+}
+
+.history-stat-card:hover{
+    transform:translateY(-3px);
+    border-color:#22d3ee;
+    box-shadow:0 10px 24px rgba(0,0,0,.18);
+}
+
+.history-stat-label{
+    color:#94a3b8;
+    font-size:15px;
+    font-weight:600;
+}
+
+.history-stat-card h2{
+    margin:18px 0 8px;
+    color:#ffffff;
+    font-size:38px;
+    font-weight:700;
+}
+
+.history-stat-card p{
+    color:#94a3b8;
+    font-size:14px;
+}
+
+/*Manager Controls */
+
+.manager-info-box{
+    margin-top:24px;
+    padding:20px;
+    background:#1a2740;
+    border:1px solid #31446e;
+    border-radius:16px;
+}
+
+.manager-info-box h4{
+    margin-bottom:16px;
+    color:#ffffff;
+    font-size:17px;
+}
+
+.manager-info-box ul{
+    margin:0;
+    padding-left:20px;
+}
+
+.manager-info-box li{
+    color:#cbd5e1;
+    margin-bottom:12px;
+    line-height:1.6;
+}
+
+.manager-divider{
+    margin:24px 0;
+    border:none;
+    border-top:1px solid #31446e;
+}
+
+/* Manager Button */
+
+.buy-button{
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:14px;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:600;
+    transition:.25s ease;
+}
+
+.buy-button:hover:not(:disabled){
+    transform:translateY(-2px);
+}
+
+.buy-button:disabled{
+    cursor:not-allowed;
+    opacity:.7;
+}
+
+/*Responsive */
+
+@media(max-width:900px){
+
+.history-stats{
+    grid-template-columns:1fr;
+}
+
+}
+
+/*Live Admin Status */
+
+.manager-status-list{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    margin-top:18px;
+}
+
+.manager-status-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px 0;
+    padding-bottom:12px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.manager-status-row:last-child{
+    border-bottom:none;
+    padding-bottom:0;
+}
+
+.manager-status-row span{
+    color:#cbd5e1;
+    font-size:15px;
+}
+
+.manager-status-row strong{
+    font-size:15px;
+    font-weight:600;
+}
+
+.status-success{
+    color:#4ade80;
+}
+
+.status-warning{
+    color:#facc15;
+}
+
+.status-error{
+    color:#f87171;
+}

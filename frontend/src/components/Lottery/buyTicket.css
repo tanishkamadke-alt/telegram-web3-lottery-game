@@ -1,0 +1,171 @@
+.buy-ticket-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+
+  padding: 28px;
+
+  display: flex;
+  flex-direction: column;
+
+  min-height: 340px;
+
+  transition: all .3s ease;
+
+  box-shadow: var(--shadow-card);
+}
+
+.buy-ticket-card:hover {
+  transform: translateY(-4px);
+
+  border-color: var(--color-primary);
+
+  box-shadow: 0 0 24px rgba(0,229,255,.15);
+}
+
+/* ---------------------- */
+/* Information Section     */
+/* ---------------------- */
+
+.buy-ticket-card .panel-info {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+
+  margin: 12px 0 18px;
+}
+
+.buy-ticket-card .info-row {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 14px 0;
+
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.buy-ticket-card .info-row:last-child {
+  border-bottom: none;
+}
+
+.buy-ticket-card .info-row span {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  color: var(--text-secondary);
+
+  font-size: 15px;
+
+  font-weight: 500;
+}
+
+.buy-ticket-card .info-row strong {
+  color: var(--text-primary);
+
+  font-size: 17px;
+
+  font-weight: 600;
+}
+
+/* ---------------------- */
+/* Status Checklist        */
+/* ---------------------- */
+
+.buy-status {
+
+  margin-top: 8px;
+
+  padding-top: 18px;
+
+  border-top: 1px solid rgba(255,255,255,.08);
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 14px;
+}
+
+.status-item {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  color: var(--text-primary);
+
+  font-size: 15px;
+
+  font-weight: 500;
+}
+
+.status-item svg {
+  color: #3ddc84;
+
+  flex-shrink: 0;
+}
+
+/* ---------------------- */
+/* Button                  */
+/* ---------------------- */
+
+.buy-ticket-card .buy-button {
+
+  margin-top: 28px;
+
+  width: 100%;
+
+  padding: 14px;
+
+  border: none;
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-primary);
+
+  color: #07131f;
+
+  font-size: 17px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: .3s;
+}
+
+.buy-ticket-card .buy-button:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 0 18px rgba(0,229,255,.35);
+}
+
+.buy-ticket-card .buy-button:disabled {
+
+  opacity: .65;
+
+  cursor: not-allowed;
+
+  transform: none;
+
+  box-shadow: none;
+}
+
+.ticket-toast{
+
+    border:1px solid #22D3EE !important;
+
+    border-radius:14px !important;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.35);
+
+}

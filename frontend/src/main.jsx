@@ -1,10 +1,50 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./config/walletConnect";
+import {Toaster} from "react-hot-toast";
+import App from "./App";
 import "./styles/globals.css";
-import App from './App.jsx'
+import { WalletProvider } from "./context/WalletContext";
+import { TelegramProvider } from "./context/TelegramContext";
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <TelegramProvider>
+      <WalletProvider>
+        <App />
+      </WalletProvider>
+    </TelegramProvider>
+  </React.StrictMode>
 );
+
+<React.StrictMode>
+  <App />
+
+  <Toaster
+    position="top-right"
+    reverseOrder={false}
+    toastOptions={{
+      duration: 3500,
+
+      style: {
+        background: "#1E2743",
+        color: "#ffffff",
+        border: "1px solid #00E5FF",
+      },
+
+      success: {
+        iconTheme: {
+          primary: "#00E676",
+          secondary: "#ffffff",
+        },
+      },
+
+      error: {
+        iconTheme: {
+          primary: "#FF5252",
+          secondary: "#ffffff",
+        },
+      },
+    }}
+  />
+</React.StrictMode>

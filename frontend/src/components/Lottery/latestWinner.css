@@ -1,0 +1,136 @@
+.latest-winner-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+
+  padding: 28px;
+
+  display: flex;
+  flex-direction: column;
+
+  min-height: 340px;
+
+  transition: all .3s ease;
+
+  box-shadow: var(--shadow-card);
+}
+
+.latest-winner-card:hover {
+  transform: translateY(-4px);
+
+  border-color: var(--color-primary);
+
+  box-shadow: 0 0 24px rgba(0,229,255,.15);
+}
+
+/* -------------------------- */
+/* Winner Information         */
+/* -------------------------- */
+
+.latest-winner-card .panel-info {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+
+  margin: 12px 0 18px;
+
+}
+
+.latest-winner-card .info-row {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 14px 0;
+
+  border-bottom: 1px solid rgba(255,255,255,.08);
+
+}
+
+.latest-winner-card .info-row:last-child {
+  border-bottom: none;
+}
+
+.latest-winner-card .info-row span {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  color: var(--text-secondary);
+
+  font-size: 15px;
+
+  font-weight: 500;
+
+}
+
+.latest-winner-card .info-row strong {
+
+  color: var(--text-primary);
+
+  font-size: 17px;
+
+  font-weight: 600;
+
+}
+
+.latest-winner-card .wallet-address {
+
+  font-family: Consolas, "Courier New", monospace;
+
+  letter-spacing: .5px;
+
+}
+
+/* -------------------------- */
+/* Status Section             */
+/* -------------------------- */
+
+.winner-status {
+
+  margin-top: 8px;
+
+  padding-top: 18px;
+
+  border-top: 1px solid rgba(255,255,255,.08);
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 14px;
+
+}
+
+.winner-status .status-item {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  color: var(--text-primary);
+
+  font-size: 15px;
+
+  font-weight: 500;
+
+}
+
+.winner-status .status-item svg {
+
+  color: #3ddc84;
+
+  flex-shrink: 0;
+
+}

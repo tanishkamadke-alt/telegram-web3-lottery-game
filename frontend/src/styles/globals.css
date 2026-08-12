@@ -41,3 +41,69 @@ img {
     display: block;
 }
 
+.winner-popup{
+
+    border-radius:22px !important;
+
+    border:1px solid rgba(34,211,238,.35);
+
+    backdrop-filter:blur(18px);
+
+    box-shadow:
+    0 0 60px rgba(34,211,238,.18);
+
+    animation:popupShow .35s ease;
+
+}
+
+@keyframes popupShow{
+
+from{
+
+    transform:scale(.8);
+
+    opacity:0;
+
+    }
+
+to{
+
+    transform:scale(1);
+
+    opacity:1;
+
+    }
+
+    }
+
+.winner-btn{
+
+    font-weight:600!important;
+
+    border-radius:12px!important;
+
+    padding:12px 24px!important;
+
+    }
+
+.history-btn{
+
+    font-weight:600!important;
+
+    border-radius:12px!important;
+
+    padding:12px 24px!important;
+
+    }
+
+.ticket-toast{
+
+    border:1px solid #22D3EE !important;
+
+    border-radius:14px !important;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.35);
+
+}
+
+
