@@ -31,9 +31,9 @@ const hardhat = {
 export const appKit = createAppKit({
   adapters: [new EthersAdapter()],
 
-  networks: [hardhat, sepolia],
+  networks: [sepolia],
 
-  defaultNetwork: hardhat,
+  defaultNetwork: sepolia,
 
   projectId,
   metadata,
