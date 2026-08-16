@@ -23,8 +23,7 @@ bot.onText(/\/start/, (msg) => {
             {
               text: "🚀 Open CipherDraw",
               web_app: {
-                url: process.env.https://telegram-web3-lottery-game.vercel.app,
-
+                url: "https://telegram-web3-lottery-game.vercel.app",
               },
             },
           ],
