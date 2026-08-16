@@ -23,7 +23,7 @@ bot.onText(/\/start/, (msg) => {
             {
               text: "🚀 Open CipherDraw",
               web_app: {
-                url: "https://versus-devouring-agreed.ngrok-free.dev",
+                url: "https://telegram-web3-lottery-game.vercel.app",
               },
             },
           ],

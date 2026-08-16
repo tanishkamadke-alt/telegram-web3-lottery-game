@@ -30,14 +30,10 @@ const hardhat = {
 
 export const appKit = createAppKit({
   adapters: [new EthersAdapter()],
-
   networks: [sepolia],
-
   defaultNetwork: sepolia,
-
   projectId,
   metadata,
-
   features: {
     analytics: false,
   },
