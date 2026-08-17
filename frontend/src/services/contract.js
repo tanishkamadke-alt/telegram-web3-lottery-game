@@ -37,10 +37,11 @@ export async function buyTicket(signer) {
   console.log("BUY TICKET SIGNER:", currentSigner);
 
   console.log("CONNECTED UI ADDRESS:", signer.address);
-
+  console.log("STEP 3.5 BEFORE buyTicket()");
   const tx = await contract.buyTicket({
     value: ethers.parseEther("0.01"),
   });
+  console.log("STEP 3.6 After buyticket()");
 
   console.log("STEP 4: Transaction sent");
   console.log(tx);
