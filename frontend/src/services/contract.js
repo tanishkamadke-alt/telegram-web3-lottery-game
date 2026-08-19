@@ -9,9 +9,9 @@ export function getContract(signer) {
     throw new Error("Wallet is not connected.");
   }
 
-  console.log("Address:", LOTTERY_CONTRACT_ADDRESS);
-  console.log("ABI length:", LOTTERY_ABI.length);
-  
+  console.log("Contract Address:", LOTTERY_CONTRACT_ADDRESS);
+  console.log("ABI Length:", LOTTERY_ABI.length);
+
   return new ethers.Contract(
     LOTTERY_CONTRACT_ADDRESS,
     LOTTERY_ABI,
@@ -19,84 +19,106 @@ export function getContract(signer) {
   );
 }
 
+// ---------------------------
+// READ FUNCTIONS
+// ---------------------------
+
 export async function getCurrentRound(signer) {
   return await getContract(signer).currentRound();
 }
 
+export async function getTotalPlayers(signer) {
+  return await getContract(signer).getTotalPlayers();
+}
+
+export async function getPrizePool(signer) {
+  const balance = await getContract(signer).getContractBalance();
+  return ethers.formatEther(balance);
+}
+
+export async function getLatestWinner(signer) {
+  return await getContract(signer).getLatestWinner();
+}
+
+export async function getLotteryHistoryCount(signer) {
+  return await getContract(signer).getLotteryHistoryCount();
+}
+
+export async function getLotteryRound(signer, index) {
+  return await getContract(signer).getLotteryRound(index);
+}
+
+export async function getLatestWinnerDetails(signer) {
+  const contract = getContract(signer);
+
+  const count = Number(
+    await contract.getLotteryHistoryCount()
+  );
+
+  if (count === 0) {
+    return null;
+  }
+
+  return await contract.getLotteryRound(count - 1);
+}
+
+export async function getManager(signer) {
+  return await getContract(signer).manager();
+}
+
+// ---------------------------
+// WRITE FUNCTIONS
+// ---------------------------
+
 export async function buyTicket(signer) {
-  console.log("STEP 1: buyTicket() called");
+
+  console.log("=================================");
+  console.log("BUY TICKET STARTED");
+  console.log("=================================");
+
+  const signerAddress = await signer.getAddress();
+
+  console.log("Signer Address:", signerAddress);
 
   const contract = getContract(signer);
 
-  console.log("STEP 2: Contract created");
+  console.log("Contract created.");
 
-  console.log("STEP 3: Sending transaction...");
+  console.log("About to send transaction...");
 
-  const currentSigner = await signer.getAddress();
-
-  console.log("BUY TICKET SIGNER:", currentSigner);
-
-  console.log("CONNECTED UI ADDRESS:", signer.address);
-  console.log("STEP 3.5 BEFORE buyTicket()");
   const tx = await contract.buyTicket({
     value: ethers.parseEther("0.01"),
   });
-  console.log("STEP 3.6 After buyticket()");
 
-  console.log("STEP 4: Transaction sent");
+  console.log("Transaction object returned.");
   console.log(tx);
+
+  console.log("Hash:", tx.hash);
+
+  console.log("Waiting for confirmation...");
 
   const receipt = await tx.wait();
 
-  console.log("STEP 5: Transaction mined");
+  console.log("Transaction mined.");
+
+  console.log(receipt);
 
   return receipt;
-  }
+}
 
-  export async function getTotalPlayers(signer) {
-    return await getContract(signer).getTotalPlayers();
-  }
+export async function drawWinner(signer) {
 
-  export async function getPrizePool(signer) {
-    const balance = await getContract(signer).getContractBalance();
+  console.log("DRAW WINNER");
 
-    return ethers.formatEther(balance);
-  }
+  const contract = getContract(signer);
 
-  export async function getLatestWinner(signer) {
-    return await getContract(signer).getLatestWinner();
-  }
-
-  export async function drawWinner(signer) {
-    const tx = await getContract(signer).drawWinner({
+  const tx = await contract.drawWinner({
     gasLimit: 1000000n,
   });
 
+  console.log("Draw Tx:", tx.hash);
+
   await tx.wait();
+
   return tx;
-  }
-
-  export async function getLotteryHistoryCount(signer) {
-    return await getContract(signer).getLotteryHistoryCount();
-  }
-
-  export async function getLotteryRound(signer, index) {
-    return await getContract(signer).getLotteryRound(index);
-  }
-
-  export async function getLatestWinnerDetails(signer) {
-    const contract = getContract(signer);
-
-    const count = Number(await contract.getLotteryHistoryCount());
-
-    if (count === 0) {
-      return null;
-    }
-
-    return await contract.getLotteryRound(count - 1);
-  }
-
-  export async function getManager(signer) {
-    return await getContract(signer).manager();
-  }
-
+}

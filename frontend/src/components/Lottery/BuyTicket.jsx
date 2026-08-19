@@ -48,15 +48,7 @@ function BuyTicket({
         "Waiting for wallet confirmation..."
       );
       console.log("Signer:", signer);
-
-      loadingToast = toast.loading("Waiting for wallet confirmation...");
-
-      console.log("Calling buyTicket...");
-
       const receipt = await buyTicket(signer);
-
-      console.log("buyTicket returned:", receipt);
-      // const receipt = await buyTicket(signer);
 
       toast.dismiss(loadingToast);
 
