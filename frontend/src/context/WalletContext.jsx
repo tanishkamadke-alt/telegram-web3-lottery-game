@@ -309,10 +309,13 @@ export function WalletProvider({ children }) {
   }
 
   // Initial wallet load
+  // useEffect(() => {
+  //   loadWallet();
+  // }, [walletProvider, address, isConnected]);
   useEffect(() => {
-    loadWallet();
-  }, [walletProvider, address, isConnected]);
-
+    console.log("APPKIT ADDRESS:", address);
+    console.log("CONNECTED:", isConnected);
+  }, [address, isConnected]);
   // Poll every 2 seconds to see if WalletConnect updates the account
   useEffect(() => {
     console.log("Polling effect started");
