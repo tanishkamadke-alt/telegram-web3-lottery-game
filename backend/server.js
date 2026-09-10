@@ -46,11 +46,16 @@ app.use(
         "https://telegram-web3-lottery-game-hzk5wtxd-tanishka20.vercel.app",
       ];
 
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
+      if (
+  !origin ||
+  allowedOrigins.includes(origin) ||
+  (origin.startsWith("https://telegram-web3-lottery-game") &&
+    origin.endsWith(".vercel.app"))
+) {
+  callback(null, true);
+} else {
+  callback(new Error("Not allowed by CORS"));
+}
     },
     credentials: true,
   })
