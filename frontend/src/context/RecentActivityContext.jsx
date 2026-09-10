@@ -1,14 +1,11 @@
 import {
-  createContext,
-  useContext,
   useState,
   useEffect,
 } from "react";
 
+import { RecentActivityContext } from "./RecentActivity";
 import socket from "../services/socket";
-import { fetchActivities } from "../services/activityService";
-
-export const RecentActivityContext = createContext(null);
+import { fetchRecentActivities } from "../services/activityService";
 
 // Connect to backend Socket.IO server
 export function RecentActivityProvider({ children }) {
@@ -19,7 +16,7 @@ export function RecentActivityProvider({ children }) {
 
       async function loadActivities() {
         try {
-          const activities = await fetchActivities();
+          const activities = await fetchRecentActivities();
           console.log("Fetched Activities:", activities);
           console.log("Length:", activities.length);
 
@@ -74,9 +71,7 @@ export function RecentActivityProvider({ children }) {
   );
 }
 
-export function useRecentActivity() {
-  return useContext(RecentActivityContext);
-}
+
 
 
 
