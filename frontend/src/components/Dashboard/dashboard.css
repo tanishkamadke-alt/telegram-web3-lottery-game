@@ -12,14 +12,11 @@
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(190px, 220px));
-  gap: 24px;
-  justify-content: start;
+  grid-template-columns: repeat(5,minmax(180px,1fr));
+  gap: 22px;
 }
 
-/* =========================
-   Stat Cards
-========================= */
+/*Stat Cards */
 
 .stat-card {
   background: var(--bg-card);
@@ -89,9 +86,7 @@
   min-height: 18px;
 }
 
-/* =========================
-   Dashboard Second Row
-========================= */
+/*Dashboard Second Row */
 
 .dashboard-row {
   display: grid;
@@ -101,9 +96,7 @@
   align-items: stretch;
 }
 
-/* =========================
-   Dashboard Panels
-========================= */
+/*Dashboard Panels*/
 
 .panel-card {
   background: var(--bg-card);
@@ -211,9 +204,7 @@
   letter-spacing: .5px;
 }
 
-/* =========================
-   Winner Panel
-========================= */
+/*Winner Panel */
 
 .winner-section {
   display: flex;
@@ -239,9 +230,7 @@
   font-weight: 600;
 }
 
-/* =========================
-   Dashboard Header
-========================= */
+/*Dashboard Header*/
 
 .dashboard-header {
   margin-bottom: 28px;
@@ -254,9 +243,7 @@
   font-weight: 400;
 }
 
-/* ==========================
-   Admin Panel Button
-========================== */
+/* Admin Panel Button*/
 
 .dashboard-header{
 

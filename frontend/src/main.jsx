@@ -4,13 +4,14 @@ import { Toaster } from "react-hot-toast";
 
 import App from "./App";
 import "./styles/globals.css";
-
+import { RecentActivityProvider } from "./context/RecentActivityContext";
 import { WalletProvider } from "./context/WalletContext";
 import { TelegramProvider } from "./context/TelegramContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <TelegramProvider>
     <WalletProvider>
+      <RecentActivityProvider>
       <App />
 
       <Toaster
@@ -37,6 +38,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           },
         }}
       />
+      </RecentActivityProvider>
     </WalletProvider>
   </TelegramProvider>
 );

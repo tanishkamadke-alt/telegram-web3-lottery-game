@@ -5,9 +5,8 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 contract Lottery is ReentrancyGuard {
 
-    // ============================================================
-    //                        ERRORS
-    // ============================================================
+
+    // ERRORS
 
     error NotManager();
     error IncorrectTicketPrice();
@@ -17,30 +16,36 @@ contract Lottery is ReentrancyGuard {
     error InvalidLotteryRound();
     error DirectTransferNotAllowed();
     error InvalidFunction();
+    error LotteryNotEnded();
+    error LotteryAlreadyRunning();
+    error LotteryExpired();
 
-    // ============================================================
-    //                    STATE VARIABLES
-    // ============================================================
-
-    /// @notice Contract owner
+   
+    //STATE VARIABLES
+   
+    ///  Contract owner
     address public immutable manager;
 
-    /// @notice Fixed ticket price
+    ///  Fixed ticket price
     uint256 public constant TICKET_PRICE = 0.01 ether;
 
-    /// @notice Current lottery players
+    /// Current lottery players
     address[] public players;
 
-    /// @notice Current lottery round
+    ///  Current lottery round
     uint256 public currentRound = 1;
 
-    /// @notice Latest winner
+    /// Latest winner
     address public latestWinner;
 
-    // ============================================================
-    //                        STRUCTS
-    // ============================================================
-
+    // Lottery timing
+    bool public lotteryOpen;
+    uint256 public lotteryStartTime;
+    uint256 public lotteryEndTime;
+    uint256 public constant LOTTERY_DURATION = 1 hours;
+    
+           // STRUCTS
+    
     struct LotteryRound {
         uint256 roundId;
         address winner;
@@ -53,10 +58,7 @@ contract Lottery is ReentrancyGuard {
 
     LotteryRound[] public lotteryHistory;
 
-    // ============================================================
-    //                         EVENTS
-    // ============================================================
-
+    // EVENTS
     event TicketPurchased(
     address indexed player,
     uint256 indexed roundId,
@@ -64,17 +66,19 @@ contract Lottery is ReentrancyGuard {
     uint256 timestamp
 );
 
-event WinnerSelected(
-    uint256 indexed roundId,
+    event WinnerSelected(
     address indexed winner,
+    uint256 indexed roundId,
     uint256 prizeAmount,
     uint256 totalPlayers,
     uint256 timestamp
 );
 
-    // ============================================================
-    //                        MODIFIER
-    // ============================================================
+    event LotteryStarted(
+        uint256 indexed roundId
+    );
+
+    // MODIFIER
 
     modifier onlyManager() {
         if (msg.sender != manager) {
@@ -83,19 +87,35 @@ event WinnerSelected(
         _;
     }
 
-    // ============================================================
-    //                      CONSTRUCTOR
-    // ============================================================
-
+     //CONSTRUCTOR
+    
     constructor() {
         manager = msg.sender;
     }
 
-    // ============================================================
-    //                    BUY TICKET
-    // ============================================================
+    function startLottery() external onlyManager {
 
+        if (lotteryOpen) {
+            revert LotteryAlreadyRunning();
+        }
+
+        lotteryOpen = true;
+        lotteryStartTime = block.timestamp;
+        lotteryEndTime = block.timestamp + LOTTERY_DURATION;
+
+        emit LotteryStarted(currentRound);
+    }
+ 
+     //BUY TICKET
     function buyTicket() external payable {
+
+        if(!lotteryOpen){
+            revert InvalidFunction();
+        }
+
+         if (block.timestamp >= lotteryEndTime) {
+            revert LotteryExpired();
+         }   
 
         if (msg.value != TICKET_PRICE) {
             revert IncorrectTicketPrice();
@@ -111,10 +131,8 @@ event WinnerSelected(
         );
     }
 
-    // ============================================================
-    //                  RANDOM NUMBER (ACADEMIC ONLY)
-    // ============================================================
-
+     //RANDOM NUMBER
+    
     function random() private view returns (uint256) {
 
         return uint256(
@@ -130,10 +148,8 @@ event WinnerSelected(
         );
     }
 
-    // ============================================================
-    //                     VIEW FUNCTIONS
-    // ============================================================
-
+      //VIEW FUNCTIONS
+    
     function getPlayers()
         external
         view
@@ -158,16 +174,22 @@ event WinnerSelected(
         return address(this).balance;
     }
 
-    // ============================================================
-    //                    DRAW WINNER
-    // ============================================================
+     //DRAW WINNER
 
     function drawWinner()
         external
         onlyManager
         nonReentrant
     {
-        if (players.length < 2) {
+        if (!lotteryOpen) {
+            revert InvalidFunction();
+        }
+
+        if (block.timestamp < lotteryEndTime) {
+            revert LotteryNotEnded();
+        }
+
+        if (players.length == 0) {
             revert NotEnoughPlayers();
         }
 
@@ -180,10 +202,8 @@ event WinnerSelected(
         uint256 winnerIndex = random() % players.length;
         address winnerAddress = players[winnerIndex];
 
-        // ========================================================
-        //                EFFECTS (CEI Pattern)
-        // ========================================================
-
+        // EFFECTS (CEI Pattern)
+    
         latestWinner = winnerAddress;
 
         lotteryHistory.push(
@@ -206,8 +226,8 @@ event WinnerSelected(
         );
 
         emit WinnerSelected(
-            currentRound,
             winnerAddress,
+            currentRound,
             prize,
             players.length,
             block.timestamp
@@ -215,12 +235,13 @@ event WinnerSelected(
 
         delete players;
 
+        lotteryOpen= false;
+        lotteryStartTime= 0;
+        lotteryEndTime= 0;
+
         currentRound++;
 
-        // ========================================================
-        //               INTERACTION (External Call)
-        // ========================================================
-
+        // INTERACTION (External Call)
         (bool success, ) = payable(winnerAddress).call{
             value: prize
         }("");
@@ -230,10 +251,8 @@ event WinnerSelected(
         }
     }
 
-    // ============================================================
-    //                    HISTORY FUNCTIONS
-    // ============================================================
-
+    // HISTORY FUNCTIONS
+    
     function getLotteryHistoryCount()
         external
         view
@@ -256,10 +275,25 @@ event WinnerSelected(
         return lotteryHistory[index];
     }
 
-    // ============================================================
-    //                    LATEST WINNER
-    // ============================================================
+function getLotteryStatus()
+    external
+    view
+    returns (
+        bool isOpen,
+        uint256 startTime,
+        uint256 endTime,
+        uint256 duration
+    )
+{
+    return (
+        lotteryOpen,
+        lotteryStartTime,
+        lotteryEndTime,
+        LOTTERY_DURATION
+    );
+}
 
+    //  LATEST WINNER
     function getLatestWinner()
         external
         view
@@ -268,10 +302,8 @@ event WinnerSelected(
         return latestWinner;
     }
 
-    // ============================================================
-    //              PREVENT DIRECT ETH TRANSFERS
-    // ============================================================
-
+    // PREVENT DIRECT ETH TRANSFERS
+    
     function ticketPrice() external pure returns (uint256) {
     return TICKET_PRICE;
     }

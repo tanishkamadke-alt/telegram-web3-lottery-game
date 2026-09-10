@@ -13,6 +13,7 @@ import {
 
 import { buyTicket } from "../../services/contract";
 import { useWallet } from "../../context/WalletContext";
+import { useRecentActivity } from "../../context/RecentActivityContext";
 
 function BuyTicket({
   ticketPrice,
@@ -23,6 +24,7 @@ function BuyTicket({
 }) {
 
   const { signer } = useWallet();
+  const { addRecentActivity } = useRecentActivity();
 
   const [loading, setLoading] = useState(false);
 
@@ -85,15 +87,20 @@ function BuyTicket({
       });
 
       console.log("Transaction:", receipt.hash);
+      const buyerAddress = await signer.getAddress();
+
+      addRecentActivity({
+        type: "ticket",
+        title: `${buyerAddress.slice(0, 6)}...${buyerAddress.slice(-4)}`,
+        description: `Bought 1 Ticket • Round #${currentRound}`,
+        timestamp: Date.now(),
+      });
 
       if (onTicketPurchased) {
-
         await onTicketPurchased();
-
       }
 
     }
-
     catch (error) {
 
       if (loadingToast) {

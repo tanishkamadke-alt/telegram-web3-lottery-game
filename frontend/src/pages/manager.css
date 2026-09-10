@@ -154,3 +154,96 @@
 .status-error{
     color:#f87171;
 }
+
+/* ==============================
+   Manager Action Buttons
+============================== */
+
+.manager-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+  margin-top: 24px;
+}
+
+.start-lottery-btn,
+.draw-lottery-btn {
+  position: relative;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+
+  padding: 26px 28px;
+
+  border-radius: 18px;
+  border: none;
+
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+.start-lottery-btn {
+  background: linear-gradient(
+    135deg,
+    #0d8f63,
+    #11b87c
+  );
+
+  color: white;
+
+  box-shadow:
+    0 0 25px rgba(17,184,124,.25);
+}
+
+.draw-lottery-btn {
+  background: linear-gradient(
+    135deg,
+    #5b2cd6,
+    #7b3ff3
+  );
+
+  color: white;
+
+  box-shadow:
+    0 0 25px rgba(123,63,243,.25);
+}
+
+.start-lottery-btn:hover:not(:disabled),
+.draw-lottery-btn:hover:not(:disabled) {
+
+  transform: translateY(-4px);
+
+  filter: brightness(1.08);
+
+}
+
+.start-lottery-btn:disabled,
+.draw-lottery-btn:disabled {
+
+  cursor: not-allowed;
+
+  filter: brightness(0.8);
+
+}
+
+.action-title {
+
+  font-size: 24px;
+
+  font-weight: 700;
+
+  margin-bottom: 8px;
+
+}
+
+.action-subtitle {
+
+  font-size: 15px;
+
+  color: rgba(255,255,255,.82);
+
+}

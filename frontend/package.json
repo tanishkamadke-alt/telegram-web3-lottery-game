@@ -17,9 +17,12 @@
     "ethers": "^6.17.0",
     "lucide-react": "^1.24.0",
     "react": "^19.2.7",
+    "react-circular-progressbar": "^2.2.0",
     "react-dom": "^19.2.7",
     "react-hot-toast": "^2.6.0",
     "react-router-dom": "^7.18.1",
+    "recharts": "^3.10.1",
+    "socket.io-client": "^4.8.3",
     "sweetalert2": "^11.26.25"
   },
   "devDependencies": {

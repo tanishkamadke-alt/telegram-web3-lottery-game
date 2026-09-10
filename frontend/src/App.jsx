@@ -4,6 +4,9 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import ActivityCentre from "./pages/ActivityCentre";
 import Manager from "./pages/Manager";
 import Settings from "./pages/Settings";
+import Statistics from "./pages/Statistics";
+import Analytics from "./pages/Analytics";
+import Leaderboard from "./pages/Leaderboard";
 import { useTelegram } from "./context/TelegramContext";
 
 function App() {
@@ -34,6 +37,30 @@ function App() {
         />
       );
       break;
+    
+    case "statistics":
+      pageComponent = (
+        <Statistics
+            refreshKey={refreshKey}
+        />
+      );
+      break;  
+
+    case "analytics":
+      pageComponent = (
+        <Analytics
+          refreshKey={refreshKey}
+        />
+      );
+      break;  
+
+    case "leaderboard":
+      pageComponent = (
+        <Leaderboard
+        refreshKey={refreshKey}
+      />
+      );
+      break;  
 
     case "settings":
       pageComponent = <Settings />;

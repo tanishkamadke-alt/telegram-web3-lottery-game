@@ -7,20 +7,24 @@ import { useCallback, useEffect, useState } from "react";
 import { ethers } from "ethers";
 
 import { useWallet } from "../context/WalletContext";
+import { useRecentActivity } from "../hooks/useRecentActivity";
 import { showWinnerPopup } from "../utils/showWinnerPopup";
 
 import {
+  startLottery,
   drawWinner,
   getManager,
   getCurrentRound,
   getTotalPlayers,
   getPrizePool,
+  getLotteryStatus,
   getLatestWinnerDetails,
 } from "../services/contract";
 
 function Manager({ refreshBlockchainData }) {
 
   const { signer } = useWallet();
+  const { addRecentActivity } = useRecentActivity();
 
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
@@ -31,12 +35,12 @@ function Manager({ refreshBlockchainData }) {
   const [currentRound, setCurrentRound] = useState(0);
   const [players, setPlayers] = useState(0);
   const [prizePool, setPrizePool] = useState("0");
-
+  const [lotteryStatus, setLotteryStatus] = useState("Waiting");
   /*Live Status */
 
   const walletConnected = !!signer;
 
-  const lotteryOpen = players > 0;
+  const lotteryOpen = lotteryStatus === "Open";
 
   const hasPrizePool =
     Number(prizePool) > 0;
@@ -76,12 +80,14 @@ function Manager({ refreshBlockchainData }) {
         round,
         totalPlayers,
         prize,
+        lottery,
       ] = await Promise.all([
 
         getManager(signer),
         getCurrentRound(signer),
         getTotalPlayers(signer),
         getPrizePool(signer),
+        getLotteryStatus(signer),
 
       ]);
 
@@ -95,6 +101,9 @@ function Manager({ refreshBlockchainData }) {
       setCurrentRound(Number(round));
       setPlayers(Number(totalPlayers));
       setPrizePool(prize);
+      setLotteryStatus(
+        lottery[0] ? "Open" : "Waiting"
+      );
 
     } catch (error) {
 
@@ -116,12 +125,45 @@ function Manager({ refreshBlockchainData }) {
 
   useEffect(() => {
 
-    loadManagerData();
+  const fetchData = async () => {
 
-  }, [loadManagerData]);
+    await loadManagerData();
+
+  };
+
+  fetchData();
+
+}, [loadManagerData]);
   useAutoRefresh(loadManagerData, 10000);
 
   /*Draw Winner */
+
+  async function handleStartLottery() {
+  try {
+    setLoading(true);
+
+    await startLottery(signer);
+
+    addRecentActivity({
+      type: "start",
+      title: "Admin",
+      description: `Started Round #${currentRound + 1}`,
+      timestamp: Date.now(),
+    }); 
+
+    refreshBlockchainData();
+
+    await loadManagerData();
+
+    alert("Lottery started successfully!");
+
+  } catch (error) {
+    console.error(error);
+    alert("Failed to start lottery.");
+  } finally {
+    setLoading(false);
+  }
+}
 
   async function handleDrawWinner() {
 
@@ -184,6 +226,17 @@ function Manager({ refreshBlockchainData }) {
         });
 
       }
+
+      if (winnerData) {
+        addRecentActivity({
+          type: "winner",
+          title: `${winnerData.winner.slice(0, 6)}...${winnerData.winner.slice(-4)}`,
+          description: `Won ${ethers.formatEther(
+            winnerData.prizeAmount
+          )} ETH • Round #${Number(winnerData.roundId)}`,
+          timestamp: Date.now(),  
+        });
+}
 
       if (refreshBlockchainData) {
 
@@ -307,13 +360,13 @@ function Manager({ refreshBlockchainData }) {
         <div className="history-stat-card">
 
           <span className="history-stat-label">
-            {loading ? "🟡" : players > 0 ? "🟢" : "⚪"} Lottery Status
+            {loading ? "🟡" : lotteryOpen ? "🟢" : "⚪"} Lottery Status
           </span>
 
           <h2>
             {loading
               ? "DRAWING"
-              : players > 0
+              : lotteryOpen
               ? "OPEN"
               : "WAITING"}
           </h2>
@@ -321,9 +374,9 @@ function Manager({ refreshBlockchainData }) {
           <p>
             {loading
               ? "Selecting Winner"
-              : players > 0
+              : lotteryOpen
               ? "Ready to Draw"
-              : "Waiting for Players"}
+              : "Waiting to Start"}
           </p>
 
         </div>
@@ -506,23 +559,50 @@ function Manager({ refreshBlockchainData }) {
           <hr className="manager-divider" />
 
           {/* Draw Button */}
+          <div className="manager-actions">
 
-          <button
-            className="buy-button"
-            onClick={handleDrawWinner}
-            disabled={
-              loading ||
-              !canDrawWinner
-            }
-          >
+  <button
+    className="start-lottery-btn"
+    onClick={handleStartLottery}
+    disabled={
+      loading ||
+      lotteryStatus === "Open"
+    }
+  >
+    <span className="action-title">
+      {loading
+        ? "Starting..."
+        : lotteryStatus === "Open"
+        ? "Lottery Running"
+        : "Start Lottery"}
+    </span>
 
-            {loading
-              ? "🎲 Drawing Winner..."
-              : "🎲 Draw Lottery Winner"}
+    <span className="action-subtitle">
+      Open a new lottery round
+    </span>
+  </button>
 
-          </button>
+  <button
+    className="draw-lottery-btn"
+    onClick={handleDrawWinner}
+    disabled={
+      loading ||
+      !canDrawWinner
+    }
+  >
+    <span className="action-title">
+      {loading
+        ? "Drawing Winner..."
+        : "Draw Lottery Winner"}
+    </span>
 
-        </div>
+    <span className="action-subtitle">
+      Select the winner & distribute prize
+    </span>
+  </button>
+
+</div>
+</div>
 
       )}
 

@@ -1,12 +1,10 @@
-import "./activity.css";
+import "./activitycentre.css";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ethers } from "ethers";
 
 import {
   Trophy,
-  Users,
-  Coins,
   Clock,
   Copy,
   CheckCircle2,
@@ -14,7 +12,6 @@ import {
 } from "lucide-react";
 
 import { useWallet } from "../context/WalletContext";
-import useAutoRefresh from "../hooks/useAutoRefresh";
 
 import {
   getLotteryHistoryCount,
@@ -26,8 +23,9 @@ function ActivityCentre({ refreshKey }) {
   const { signer, walletAddress } = useWallet();
 
   const [loading, setLoading] = useState(true);
-
   const [rounds, setRounds] = useState([]);
+  const [showAll, setShowAll] = useState(false)
+  const [totalRoundsCount, setTotalRoundsCount] = useState(0);
 
   const loadHistory = useCallback(async () => {
 
@@ -48,6 +46,7 @@ function ActivityCentre({ refreshKey }) {
       const totalRounds = Number(
         await getLotteryHistoryCount(signer)
       );
+      setTotalRoundsCount(totalRounds);
 
       if (totalRounds === 0) {
 
@@ -59,20 +58,22 @@ function ActivityCentre({ refreshKey }) {
 
       const promises = [];
 
-      for (
-        let i = totalRounds - 1;
-        i >= 0;
-        i--
-      ) {
+const startIndex = showAll
+  ? 0
+  : Math.max(totalRounds - 10, 0);
 
-        promises.push(
-          getLotteryRound(
-            signer,
-            i
-          )
-        );
-
-      }
+for (
+  let i = totalRounds - 1;
+  i >= startIndex;
+  i--
+) {
+  promises.push(
+    getLotteryRound(
+      signer,
+      i
+    )
+  );
+}
 
       const history =
         await Promise.all(promises);
@@ -141,18 +142,16 @@ function ActivityCentre({ refreshKey }) {
 
     }
 
-  }, [signer, walletAddress]);
+  }, [signer, walletAddress, showAll]);
 
   useEffect(() => {
+    const fetchHistory=async () => {
+      await loadHistory();
+    }
 
-    loadHistory();
+    fetchHistory();
 
   }, [loadHistory, refreshKey]);
-
-  useAutoRefresh(
-    loadHistory,
-    10000
-  );
 
   const stats = useMemo(() => {
 
@@ -247,7 +246,7 @@ function ActivityCentre({ refreshKey }) {
 
           <h2>
 
-            {stats.totalRounds}
+            {totalRoundsCount}
 
           </h2>
 
@@ -348,6 +347,20 @@ function ActivityCentre({ refreshKey }) {
         </div>
 
       ) : (
+  <>
+    {!showAll && stats.totalRounds > 10 && (
+      <div className="activity-view-all">
+        <button
+          className="view-all-btn"
+          onClick={() => {
+            setShowAll(true);
+            loadHistory();
+          }}
+        >
+          View All Activity
+        </button>
+      </div>
+    )}
 
         <div className="activity-timeline">
 
@@ -362,13 +375,7 @@ function ActivityCentre({ refreshKey }) {
 
               <div className="activity-card-header">
 
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "18px",
-                  }}
-                >
+                <div className="activity-header-left">
 
                   <div className="activity-icon">
 
@@ -420,13 +427,9 @@ function ActivityCentre({ refreshKey }) {
 
               <div className="activity-grid">
 
-                <div>
+                <div className="activity-item">
 
-                  <span>
-
-                    Winner
-
-                  </span>
+                  <span>Winner</span>
 
                   <strong>
 
@@ -440,7 +443,7 @@ function ActivityCentre({ refreshKey }) {
 
                 </div>
 
-                <div>
+                <div className="activity-item">
 
                   <span>
 
@@ -456,7 +459,7 @@ function ActivityCentre({ refreshKey }) {
 
                 </div>
 
-                <div>
+                <div className="activity-item">
 
                   <span>
 
@@ -472,7 +475,7 @@ function ActivityCentre({ refreshKey }) {
 
                 </div>
 
-                <div>
+                <div className="activity-item">
 
                   <span>
 
@@ -488,7 +491,7 @@ function ActivityCentre({ refreshKey }) {
 
                 </div>
 
-                <div>
+                <div className="activity-item">
 
                   <span>
 
@@ -498,7 +501,7 @@ function ActivityCentre({ refreshKey }) {
 
                   <strong>
 
-                    {round.lotteryHash.substring(0, 12)}
+                    {round.lotteryHash.substring(0, 10)}
                     ...
 
                   </strong>
@@ -521,12 +524,7 @@ function ActivityCentre({ refreshKey }) {
 
                 </div>
 
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "10px",
-                  }}
-                >
+                <div className="activity-actions">
 
                   <button
                     className="copy-btn"
@@ -579,6 +577,7 @@ function ActivityCentre({ refreshKey }) {
           ))}
 
         </div>
+      </>  
 
       )}
 

@@ -1,0 +1,152 @@
+.leaderboard-page{
+    display:flex;
+    flex-direction:column;
+    gap:28px;
+}
+
+.leaderboard-header h1{
+    color:white;
+    font-size:38px;
+}
+
+.leaderboard-header p{
+    color:#9CA9C7;
+    margin-top:8px;
+    font-size:15px;
+}
+
+/* ===========================
+   Stats Cards
+=========================== */
+
+.leaderboard-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:22px;
+    margin-top:28px;
+}
+
+.leaderboard-card{
+    background:var(--bg-card);
+    border:1px solid var(--border-color);
+    border-radius:18px;
+    padding:26px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    transition:.25s;
+}
+
+.leaderboard-card:hover{
+    transform:translateY(-5px);
+    border-color:#20D9FF;
+}
+
+.leaderboard-card svg{
+    color:#20D9FF;
+}
+
+.leaderboard-card h2{
+    color:white;
+    font-size:32px;
+}
+
+.leaderboard-card h2 small{
+    font-size:18px;
+    color:#8FA5D9;
+    font-weight:500;
+}
+
+.leaderboard-card p{
+    color:#9CA9C7;
+}
+
+.leaderboard-table-card{
+    margin-top:30px;
+    background:var(--bg-secondary);
+    border:1px solid var(--border-color);
+    border-radius:18px;
+    padding:24px;
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.leaderboard-table-card:hover{
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-card);
+    border-color: var(--color-primary);
+}
+
+.leaderboard-table-card h2{
+    margin-bottom:20px;
+    color:var(--text-primary);
+}
+
+.leaderboard-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.leaderboard-table th{
+    text-align:left;
+    padding:14px;
+    color:var(--text-muted);
+    border-bottom:1px solid var(--border-color);
+}
+
+.leaderboard-table td{
+    padding:16px 14px;
+    border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.leaderboard-table tbody tr{
+    transition:.25s;
+}
+
+.leaderboard-table tbody tr:hover{
+    background:rgba(32,217,255,.05);
+}
+
+.wallet-link{
+    color:#20D9FF;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.wallet-link:hover{
+    text-decoration:underline;
+}
+
+.winner-row{
+    background:rgba(32,217,255,.04);
+}
+
+.leaderboard-table-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.leaderboard-table-header h2{
+    margin:0;
+    color:var(--text-primary);
+}
+
+.leaderboard-table-header span{
+    color:var(--text-muted);
+    font-size:14px;
+}
+
+.empty-row{
+    text-align:center;
+    padding:30px;
+    color:var(--text-muted);
+}
+
+.leaderboard-count{
+    margin-top:8px;
+    margin-bottom:18px;
+    color:var(--text-muted);
+    font-size:14px;
+}
