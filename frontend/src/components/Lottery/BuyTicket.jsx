@@ -13,7 +13,7 @@ import {
 
 import { buyTicket } from "../../services/contract";
 import { useWallet } from "../../context/WalletContext";
-import { useRecentActivity } from "../../context/RecentActivityContext";
+import { useRecentActivity } from "../../hooks/useRecentActivity";
 
 function BuyTicket({
   ticketPrice,
