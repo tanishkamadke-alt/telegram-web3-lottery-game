@@ -39,11 +39,19 @@ startBlockchainListener(io);
 // Middleware
 app.use(
   cors({
-    origin: [
-    "http://localhost:5173",
-    "https://telegram-web3-lottery-game.vercel.app",
-    "https://telegram-web3-lottery-game-hzk5wtxd-tanishka20.vercel.app",
-  ],
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "https://telegram-web3-lottery-game.vercel.app",
+        "https://telegram-web3-lottery-game-hzk5wtxd-tanishka20.vercel.app",
+      ];
+
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
