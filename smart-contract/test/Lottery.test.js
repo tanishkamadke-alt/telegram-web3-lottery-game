@@ -48,6 +48,7 @@ describe("Lottery Contract", function () {
     describe("Ticket Purchase", function (){
 
         it("Should allow a user to buy ticket", async function(){
+            await lottery.startLottery();
 
             await lottery.connect(player1).buyTicket({
                 value: ethers.parseEther("0.01")
@@ -58,6 +59,8 @@ describe("Lottery Contract", function () {
         });
 
         it("Should increase the contract balance after ticket purchase", async function(){
+            await lottery.startLottery();
+
             await lottery.connect(player1).buyTicket({
                 value: ethers.parseEther("0.01")
             });
@@ -69,6 +72,8 @@ describe("Lottery Contract", function () {
 
     describe("Access Control", function (){
         it("Should prevent a non-manager from drawing the winner", async function () {
+            await lottery.startLottery();
+            
             await lottery.connect(player1).buyTicket({
                 value: ethers.parseEther("0.01")
             });
@@ -79,8 +84,9 @@ describe("Lottery Contract", function () {
             
             await expect(
                 lottery.connect(player1).drawWinner()
-            ).to.be.revertedWith(
-                "Only manager can perform this action"
+            ).to.be.revertedWithCustomError(
+                lottery,
+                "NotManager"
             );  
         });
 
@@ -88,13 +94,17 @@ describe("Lottery Contract", function () {
 
     describe("Winner Selection", function () {
         it("Should select a winner and increment the round", async function () {
-             await lottery.connect(player1).buyTicket({
+            await lottery.startLottery();
+
+            await lottery.connect(player1).buyTicket({
                 value: ethers.parseEther("0.01")
              });
 
              await lottery.connect(player2).buyTicket({
                 value: ethers.parseEther("0.01")
              });
+             await ethers.provider.send("evm_increaseTime", [30 * 60]);
+             await ethers.provider.send("evm_mine");
 
               await lottery.drawWinner();
 
@@ -113,6 +123,7 @@ describe("Lottery Contract", function () {
 
         it("Should store completed lottery round in history", async function (){
 
+            await lottery.startLottery();
             await lottery.connect(player1).buyTicket({
                 value: ethers.parseEther("0.01")
 
@@ -121,6 +132,9 @@ describe("Lottery Contract", function () {
             await lottery.connect(player2).buyTicket({
                 value: ethers.parseEther("0.01")
             });
+
+            await ethers.provider.send("evm_increaseTime", [30 * 60]);
+            await ethers.provider.send("evm_mine");
 
             await lottery.drawWinner();
 

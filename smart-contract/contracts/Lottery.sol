@@ -42,7 +42,7 @@ contract Lottery is ReentrancyGuard {
     bool public lotteryOpen;
     uint256 public lotteryStartTime;
     uint256 public lotteryEndTime;
-    uint256 public constant LOTTERY_DURATION = 1 hours;
+    uint256 public constant LOTTERY_DURATION = 30 minutes;
     
            // STRUCTS
     
@@ -78,6 +78,10 @@ contract Lottery is ReentrancyGuard {
         uint256 indexed roundId
     );
 
+    event LotteryReset(
+        uint256 indexed roundId
+    );
+
     // MODIFIER
 
     modifier onlyManager() {
@@ -105,7 +109,28 @@ contract Lottery is ReentrancyGuard {
 
         emit LotteryStarted(currentRound);
     }
- 
+
+    // RESET EXPIRED EMPTY LOTTERY
+    function resetExpiredLottery() external onlyManager {
+        if (!lotteryOpen) {
+            revert InvalidFunction();
+        }
+
+        if (block.timestamp < lotteryEndTime) {
+            revert LotteryNotEnded();
+        }
+
+        if (players.length > 0) {
+            revert NotEnoughPlayers();
+        }
+
+        lotteryOpen = false;
+        lotteryStartTime = 0;
+        lotteryEndTime = 0;
+
+        emit LotteryReset(currentRound);
+        }
+
      //BUY TICKET
     function buyTicket() external payable {
 

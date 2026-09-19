@@ -21,9 +21,8 @@ provider.websocket.on("close", () => {
     console.log("🔴 WebSocket disconnected");
 });
 
-
 const contract = new ethers.Contract(
-    "0x33d65A156650C2FeC1A7c3366F90C99b18aa6762",
+    "0xd93dbb2e66e720389e5a7838dC049e8a8E57517F",
     LotteryABI.abi,
     provider
 );
