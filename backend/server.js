@@ -21,14 +21,10 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: [
-      "http://localhost:5173",
-      "https://telegram-web3-lottery-game.vercel.app",
-      "https://telegram-web3-lottery-game-hzk5wtxd-tanishka20.vercel.app",
-    ],
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
+  origin: "http://localhost:5173",
+  methods: ["GET", "POST"],
+  credentials: true,
+},
   transports: ["websocket"],
 });
 app.set("io", io);
@@ -39,24 +35,7 @@ startBlockchainListener(io);
 // Middleware
 app.use(
   cors({
-    origin: (origin, callback) => {
-      const allowedOrigins = [
-        "http://localhost:5173",
-        "https://telegram-web3-lottery-game.vercel.app",
-        "https://telegram-web3-lottery-game-hzk5wtxd-tanishka20.vercel.app",
-      ];
-
-      if (
-  !origin ||
-  allowedOrigins.includes(origin) ||
-  (origin.startsWith("https://telegram-web3-lottery-game") &&
-    origin.endsWith(".vercel.app"))
-) {
-  callback(null, true);
-} else {
-  callback(new Error("Not allowed by CORS"));
-}
-    },
+    origin: "http://localhost:5173",
     credentials: true,
   })
 );
