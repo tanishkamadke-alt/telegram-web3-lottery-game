@@ -98,12 +98,20 @@
 
 .sidebar-footer {
   border-top: 1px solid var(--border-color);
-
   padding-top: 20px;
-
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: stretch;
   gap: 12px;
+}
+
+.etherauthority-sidebar {
+  width: 100%;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  padding-top: 2px;
 }
 
 .status-dot {
@@ -207,3 +215,46 @@
     transform: translateY(-2px);
     box-shadow: var(--shadow-card);
     }
+
+    /* =========================
+   EtherAuthority Branding
+    ========================= */
+
+.powered-by {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.etherauthority-logo {
+  height: 32px;
+  width: auto;
+  max-width: 130px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 4px;
+  padding: 2px 5px;
+}
+
+/* =========================
+   Application Footer
+========================= */
+
+/* =========================
+   Application Footer
+========================= */
+
+.app-footer {
+  padding: 12px 30px 16px;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+

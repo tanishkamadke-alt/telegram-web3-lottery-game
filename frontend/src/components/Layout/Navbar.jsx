@@ -1,7 +1,6 @@
 import { useWallet } from "../../context/WalletContext";
 
 function Navbar() {
-
   const {
     walletAddress,
     connected,
@@ -10,7 +9,6 @@ function Navbar() {
   } = useWallet();
 
   return (
-
     <header className="navbar">
 
       <div className="navbar-left">
@@ -28,40 +26,28 @@ function Navbar() {
       <div className="navbar-right">
 
         <span className="network-badge">
-
           🟢 {networkName || "Unknown"}
-
         </span>
 
         {!connected ? (
-
           <button
             className="wallet-button"
             onClick={connectWallet}
           >
-
             Connect Wallet
-
           </button>
-
         ) : (
-
           <button className="wallet-button">
-
             {walletAddress.slice(0, 6)}
             ...
             {walletAddress.slice(-4)}
-
           </button>
-
         )}
 
       </div>
 
     </header>
-
   );
-
 }
 
 export default Navbar;

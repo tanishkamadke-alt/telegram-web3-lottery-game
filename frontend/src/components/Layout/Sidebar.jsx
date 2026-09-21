@@ -106,6 +106,11 @@ function Sidebar({ page, setPage }) {
 
       <div className="sidebar-footer">
         <BlockchainStatus />
+
+        <div className="etherauthority-sidebar">
+          Powered by EtherAuthority
+        </div>
+
       </div>
 
     </aside>

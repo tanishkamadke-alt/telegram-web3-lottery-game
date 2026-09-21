@@ -25,6 +25,12 @@ function MainLayout({
           {children}
         </main>
 
+        <footer className="app-footer">
+          Built by: Tanishka Madke&nbsp;&nbsp;|&nbsp;&nbsp;
+          Organization: EtherAuthority&nbsp;&nbsp;|&nbsp;&nbsp;
+          Network: Ethereum Sepolia Testnet
+        </footer>
+
       </div>
 
     </div>
